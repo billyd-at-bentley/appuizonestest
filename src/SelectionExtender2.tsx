@@ -500,7 +500,9 @@ export class SelectionExtender {
         this._stateKey = stateKey;
 
         // subscribe for unified selection changes
-        //this._handleSelectionChangedDispose = Presentation.selection.selectionChange.addListener(this._handleSelectionChanged);
+        console.log("Registering selectionChangedHandler");
+        this._handleSelectionChangedDispose = Presentation.selection.selectionChange.addListener(this._handleSelectionChanged);
+        console.log("Registration of selectionChangedHandler complete");
     }
 
     public static uninitialize(): void {

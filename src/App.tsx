@@ -3,9 +3,17 @@ import "./App.scss";
 import {Viewer} from "@bentley/itwin-viewer-react";
 import React, {useEffect, useState} from "react";
 
+import { IModelApp } from "@bentley/imodeljs-frontend";
+
 import AuthorizationClient from "./AuthorizationClient";
 import {Header} from "./Header";
 import {TestUiProvider} from "./TestUiProvider";
+
+import {LabelingApp} from "./LabelingApp";
+
+import { SelectionExtender } from "./SelectionExtender2";
+
+import { Presentation } from "@bentley/presentation-frontend";
 
 // import { UiItemsManager } from "@bentley/ui-abstract";
 // import { TestUiProvider } from "./sampleFrontstageProvider";
@@ -88,6 +96,23 @@ const App: React.FC = () => {
         setIsAuthorized(false);
     };
 
+    const onIModelConnected = async () => {
+        console.log("onIModelAppInit invoked");
+        console.log("IModelApp.isInitialized => " + IModelApp.initialized);
+       
+        try {
+        await Presentation.initialize({
+            // activeLocale: IModelApp.i18n.languageList()[0],
+            activeLocale: "en",
+        });
+        }
+        catch (error) {}
+
+        console.log("Presentation initialized");
+
+        SelectionExtender.initialize(LabelingApp.store, "selectionExtenderState");
+    }
+
     return (
         <div>
             <Header
@@ -111,6 +136,7 @@ const App: React.FC = () => {
                             }
                         }
                         uiProviders={[new TestUiProvider()]}
+                        onIModelConnected={onIModelConnected}
                     />
                 )
             )}

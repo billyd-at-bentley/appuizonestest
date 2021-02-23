@@ -74,7 +74,7 @@ export class LabelingApp {
         //
         // initialize SelectionHelper
         // initPromises.push(SelectionExtender.initialize(this.store, IModelApp.i18n, "selectionExtenderState"));
-        SelectionExtender.initialize(this.store, "selectionExtenderState");
+        //SelectionExtender.initialize(this.store, "selectionExtenderState");
         //
         //     // initialize machine learning i18n
         //     initPromises.push(IModelApp.i18n.registerNamespace("MachineLearning").readFinished);
