@@ -14,6 +14,8 @@ import {LabelingApp} from "./LabelingApp";
 import { SelectionExtender } from "./SelectionExtender2";
 
 import { Presentation } from "@bentley/presentation-frontend";
+import { SetupConfigEnv } from "./common/configuration/configuration";
+import { Config } from "@bentley/bentleyjs-core";
 
 // import { UiItemsManager } from "@bentley/ui-abstract";
 // import { TestUiProvider } from "./sampleFrontstageProvider";
@@ -32,6 +34,9 @@ const App: React.FC = () => {
     useEffect(() => {
         console.log("useEffect #1");
         const initOidc = async () => {
+            SetupConfigEnv(102);
+            const buddiRegion = Config.App.getNumber('imjs_buddi_resolve_url_using_region');
+            console.log("1A. buddi (with region) setting is => " + buddiRegion);
             if (!AuthorizationClient.oidcClient) {
                 await AuthorizationClient.initializeOidc();
             }
@@ -41,6 +46,9 @@ const App: React.FC = () => {
                 await AuthorizationClient.signInSilent();
                 console.log("setting IsAuthorized flag to => " + AuthorizationClient.oidcClient.isAuthorized);
                 setIsAuthorized(AuthorizationClient.oidcClient.isAuthorized);
+                const buddiRegion = Config.App.getNumber('imjs_buddi_resolve_url_using_region');
+                console.log("1C. buddi (with region) setting is => " + buddiRegion);
+                
             } catch (error) {
                 console.log("ERROR: useEffect #1, during oidc initialization");
             }
@@ -49,10 +57,15 @@ const App: React.FC = () => {
         console.log("ue1.A Completed oidc.Init");
         console.log("ue1.B sLoggingIn => " + isLoggingIn);
         console.log("ue1.C isAuthorized => " + isAuthorized);
+        const buddiRegion = Config.App.getNumber('imjs_buddi_resolve_url_using_region');
+        console.log("1B. buddi (with region) setting is => " + buddiRegion);
     }, []);
 
     useEffect(() => {
         console.log("useEffect #2");
+        const buddiRegion = Config.App.getNumber('imjs_buddi_resolve_url_using_region');
+        console.log("2. buddi (with region) setting is => " + buddiRegion);
+       
         if (!process.env.IMJS_CONTEXT_ID) {
             throw new Error(
                 "Please add a valid context ID in the .env file and restart the application"
@@ -67,6 +80,8 @@ const App: React.FC = () => {
 
     useEffect(() => {
         console.log("useEffect #3");
+        const buddiRegion = Config.App.getNumber('imjs_buddi_resolve_url_using_region');
+        console.log("3. buddi (with region) setting is => " + buddiRegion);
         if (isLoggingIn && isAuthorized) {
             setIsLoggingIn(false);
         }
@@ -74,6 +89,8 @@ const App: React.FC = () => {
 
     useEffect(() => {
         console.log("useEffect #4");
+        const buddiRegion = Config.App.getNumber('imjs_buddi_resolve_url_using_region');
+        console.log("4. buddi (with region) setting is => " + buddiRegion);
         console.log("ue4.B sLoggingIn => " + isLoggingIn);
         console.log("ue4.C isAuthorized => " + isAuthorized);
     }, [isAuthorized, isLoggingIn]);
@@ -96,10 +113,11 @@ const App: React.FC = () => {
         setIsAuthorized(false);
     };
 
-    const onIModelConnected = async () => {
-        console.log("onIModelAppInit invoked");
+    const onIModelConnected = async (connection: any) => {
+        console.log("onIModelConnected invoked");
         console.log("IModelApp.isInitialized => " + IModelApp.initialized);
-       
+        console.log("connection =>" + JSON.stringify(connection));
+
         try {
         await Presentation.initialize({
             // activeLocale: IModelApp.i18n.languageList()[0],
@@ -111,6 +129,13 @@ const App: React.FC = () => {
         console.log("Presentation initialized");
 
         SelectionExtender.initialize(LabelingApp.store, "selectionExtenderState");
+    }
+
+    const onIModelAppInit = async () => {
+        console.log("onIModelAppInit invoked");
+       
+        const buddiRegion = Config.App.getNumber('imjs_buddi_resolve_url_using_region');
+        console.log("9. buddi (with region) setting is => " + buddiRegion);
     }
 
     return (
@@ -137,6 +162,7 @@ const App: React.FC = () => {
                         }
                         uiProviders={[new TestUiProvider()]}
                         onIModelConnected={onIModelConnected}
+                        onIModelAppInit={onIModelAppInit}
                     />
                 )
             )}
