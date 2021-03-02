@@ -1,10 +1,20 @@
 import "./index.scss";
-
 import React from "react";
 import ReactDOM from "react-dom";
-
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
+import {LabelingApp} from "./LabelingApp";
+
+import { SetupConfigEnv } from './common/configuration/configuration';
+
+// configure environment --> relocated to .env file
+// SetupConfigEnv(0); // PROD
+// SetupConfigEnv(102); // QA
+// SetupConfigEnv(103); // DEV
+
+// App startup
+LabelingApp.startup();
+console.log("Completed LabelingApp.startup");
 
 ReactDOM.render(<App />, document.getElementById("root"));
 
